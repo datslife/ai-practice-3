@@ -99,4 +99,12 @@ describe('GET /conversations/:id/messages', () => {
     expect(res.body.messages).toHaveLength(1);
     expect(res.body.messages[0].content).toBe('First');
   });
+
+  it('returns 400 for non-numeric limit', async () => {
+    const res = await request(app)
+      .get(`/conversations/${conversationId}/messages?limit=abc`)
+      .set('Authorization', `Bearer ${aliceToken}`);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('limit must be a positive integer');
+  });
 });

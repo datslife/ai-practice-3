@@ -23,10 +23,19 @@ conversationsRouter.get('/:id/messages', requireAuth, async (req, res, next) => 
       return;
     }
 
-    const limit = req.query.limit !== undefined ? Number(req.query.limit) : undefined;
-    const offset = req.query.offset !== undefined ? Number(req.query.offset) : undefined;
+    const rawLimit = req.query.limit !== undefined ? Number(req.query.limit) : undefined;
+    const rawOffset = req.query.offset !== undefined ? Number(req.query.offset) : undefined;
 
-    const messages = await listMessages(id, limit, offset);
+    if (rawLimit !== undefined && (!Number.isInteger(rawLimit) || rawLimit < 1)) {
+      res.status(400).json({ error: 'limit must be a positive integer' });
+      return;
+    }
+    if (rawOffset !== undefined && (!Number.isInteger(rawOffset) || rawOffset < 0)) {
+      res.status(400).json({ error: 'offset must be a non-negative integer' });
+      return;
+    }
+
+    const messages = await listMessages(id, rawLimit, rawOffset);
     res.json({ messages });
   } catch (err) {
     next(err);
