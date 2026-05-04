@@ -61,8 +61,8 @@ describe('requireAuth middleware', () => {
   it('rejects request with expired token', async () => {
     const expired = jwt.sign(
       { userId: 'u1', email: 'a@test.com' },
-      process.env.JWT_SECRET as string,
-      { expiresIn: 0 }
+      process.env.JWT_SECRET!,
+      { expiresIn: -1 }
     );
     const res = await request(makeApp())
       .get('/protected')

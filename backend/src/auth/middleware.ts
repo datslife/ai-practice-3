@@ -10,7 +10,11 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
   try {
     req.user = verifyToken(auth.slice(7));
     next();
-  } catch {
+  } catch (err) {
+    if (err instanceof Error && err.message === 'JWT_SECRET not set') {
+      next(err);
+      return;
+    }
     res.status(401).json({ error: 'Unauthorized' });
   }
 }
