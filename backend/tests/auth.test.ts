@@ -2,6 +2,7 @@ import { signToken, verifyToken } from '../src/auth/jwt';
 import express, { Request, Response } from 'express';
 import request from 'supertest';
 import { requireAuth } from '../src/auth/middleware';
+import jwt from 'jsonwebtoken';
 
 describe('JWT utilities', () => {
   const payload = { userId: 'abc-123', email: 'alice@test.com' };
@@ -46,6 +47,7 @@ describe('requireAuth middleware', () => {
   it('rejects request with no Authorization header', async () => {
     const res = await request(makeApp()).get('/protected');
     expect(res.status).toBe(401);
+    expect(res.body.error).toBe('Unauthorized');
   });
 
   it('rejects request with invalid token', async () => {
@@ -53,5 +55,19 @@ describe('requireAuth middleware', () => {
       .get('/protected')
       .set('Authorization', 'Bearer invalid.token.here');
     expect(res.status).toBe(401);
+    expect(res.body.error).toBe('Unauthorized');
+  });
+
+  it('rejects request with expired token', async () => {
+    const expired = jwt.sign(
+      { userId: 'u1', email: 'a@test.com' },
+      process.env.JWT_SECRET as string,
+      { expiresIn: 0 }
+    );
+    const res = await request(makeApp())
+      .get('/protected')
+      .set('Authorization', `Bearer ${expired}`);
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('Unauthorized');
   });
 });
