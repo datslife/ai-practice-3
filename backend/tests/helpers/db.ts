@@ -14,5 +14,5 @@ export async function resetDb(): Promise<void> {
 }
 
 export async function closeDb(): Promise<void> {
-  await pool.end();
+  // Pool is closed in globalTeardown — this is a no-op kept for API compatibility
 }

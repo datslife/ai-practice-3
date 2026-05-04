@@ -6,6 +6,7 @@ const config: Config = {
   rootDir: '.',
   testMatch: ['<rootDir>/tests/**/*.test.ts'],
   setupFiles: ['<rootDir>/tests/setup.ts'],
+  globalTeardown: '<rootDir>/tests/globalTeardown.ts',
   transform: {
     '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
   },
