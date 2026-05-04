@@ -1,0 +1,4 @@
+{"type":"server-started","port":57789,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:57789","screen_dir":"/Volumes/DATA/ME/KANIC/AI_project/ai-practice-3/.superpowers/brainstorm/78167-1777477463/content","state_dir":"/Volumes/DATA/ME/KANIC/AI_project/ai-practice-3/.superpowers/brainstorm/78167-1777477463/state"}
+{"type":"screen-added","file":"/Volumes/DATA/ME/KANIC/AI_project/ai-practice-3/.superpowers/brainstorm/78167-1777477463/content/architecture.html"}
+{"type":"screen-added","file":"/Volumes/DATA/ME/KANIC/AI_project/ai-practice-3/.superpowers/brainstorm/78167-1777477463/content/ui-screens.html"}
+{"type":"server-stopped","reason":"idle timeout"}

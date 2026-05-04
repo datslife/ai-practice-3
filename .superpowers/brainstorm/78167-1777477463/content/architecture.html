@@ -1,0 +1,73 @@
+<h2>Architecture Overview</h2>
+<p class="subtitle">Option B — REST + Socket.io + Redis · React Native client</p>
+
+<div style="display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap;">
+
+  <!-- Client -->
+  <div style="flex: 1; min-width: 180px; border: 2px solid #6366f1; border-radius: 12px; padding: 16px;">
+    <div class="label" style="color: #6366f1;">React Native App</div>
+    <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 14px; line-height: 2;">
+      <li>Auth screens</li>
+      <li>User list screen</li>
+      <li>Chat screen</li>
+      <li>Socket.io client</li>
+      <li>REST API calls</li>
+    </ul>
+  </div>
+
+  <!-- Arrow -->
+  <div style="display: flex; align-items: center; font-size: 24px; color: #888;">⇄</div>
+
+  <!-- Backend -->
+  <div style="flex: 1; min-width: 180px; border: 2px solid #10b981; border-radius: 12px; padding: 16px;">
+    <div class="label" style="color: #10b981;">Node.js + TypeScript Server</div>
+    <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 14px; line-height: 2;">
+      <li>REST API (auth, users, history)</li>
+      <li>Socket.io (real-time events)</li>
+      <li>JWT authentication</li>
+      <li>Message persistence</li>
+    </ul>
+  </div>
+
+  <!-- Arrow -->
+  <div style="display: flex; align-items: center; font-size: 24px; color: #888;">⇄</div>
+
+  <!-- Data layer -->
+  <div style="flex: 1; min-width: 160px;">
+    <div style="border: 2px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+      <div class="label" style="color: #f59e0b;">PostgreSQL</div>
+      <ul style="margin: 8px 0 0 0; padding-left: 18px; font-size: 14px; line-height: 2;">
+        <li>Users</li>
+        <li>Messages</li>
+        <li>Conversations</li>
+      </ul>
+    </div>
+    <div style="border: 2px solid #ef4444; border-radius: 12px; padding: 16px;">
+      <div class="label" style="color: #ef4444;">Redis</div>
+      <ul style="margin: 8px 0 0 0; padding-left: 18px; font-size: 14px; line-height: 2;">
+        <li>Online presence</li>
+        <li>Socket.io pub/sub</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 32px; border-top: 1px solid #333; padding-top: 24px;">
+  <h3>Real-time Event Flow</h3>
+  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 14px; margin-top: 12px;">
+    <div style="background: #6366f122; border: 1px solid #6366f1; padding: 8px 14px; border-radius: 8px;">User A sends message</div>
+    <div style="color: #888;">→</div>
+    <div style="background: #10b98122; border: 1px solid #10b981; padding: 8px 14px; border-radius: 8px;">Server persists to Postgres</div>
+    <div style="color: #888;">→</div>
+    <div style="background: #ef444422; border: 1px solid #ef4444; padding: 8px 14px; border-radius: 8px;">Publishes via Redis</div>
+    <div style="color: #888;">→</div>
+    <div style="background: #10b98122; border: 1px solid #10b981; padding: 8px 14px; border-radius: 8px;">Socket.io emits to User B</div>
+    <div style="color: #888;">→</div>
+    <div style="background: #6366f122; border: 1px solid #6366f1; padding: 8px 14px; border-radius: 8px;">User B sees message</div>
+  </div>
+</div>
+
+<div style="margin-top: 24px; font-size: 13px; color: #888;">
+  Does this architecture look right? Reply in terminal.
+</div>
