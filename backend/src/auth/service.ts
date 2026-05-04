@@ -58,6 +58,9 @@ export async function loginUser(
   email: string,
   password: string
 ): Promise<{ token: string; user: { id: string; email: string; name: string } }> {
+  if (!email || typeof email !== 'string') throw new AuthError(400, 'Email is required');
+  if (!password || typeof password !== 'string') throw new AuthError(400, 'Password is required');
+
   const result = await pool.query<{
     id: string;
     email: string;
@@ -65,7 +68,7 @@ export async function loginUser(
     password_hash: string;
   }>(
     'SELECT id, email, name, password_hash FROM users WHERE email = $1',
-    [typeof email === 'string' ? email.toLowerCase() : email]
+    [email.toLowerCase()]
   );
 
   const row = result.rows[0];
