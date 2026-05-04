@@ -1,9 +1,18 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { registerUser, loginUser, AuthError } from './service';
 
 export const authRouter = Router();
 
-authRouter.post('/register', async (req, res, next) => {
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later' },
+});
+
+authRouter.post('/register', authLimiter, async (req, res, next) => {
   const { name, email, password } = req.body ?? {};
   if (typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
     res.status(400).json({ error: 'Invalid request body' });
@@ -21,7 +30,7 @@ authRouter.post('/register', async (req, res, next) => {
   }
 });
 
-authRouter.post('/login', async (req, res, next) => {
+authRouter.post('/login', authLimiter, async (req, res, next) => {
   const { email, password } = req.body ?? {};
   if (typeof email !== 'string' || typeof password !== 'string') {
     res.status(400).json({ error: 'Invalid request body' });
