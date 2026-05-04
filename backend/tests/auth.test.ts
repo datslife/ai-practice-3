@@ -1,4 +1,7 @@
 import { signToken, verifyToken } from '../src/auth/jwt';
+import express, { Request, Response } from 'express';
+import request from 'supertest';
+import { requireAuth } from '../src/auth/middleware';
 
 describe('JWT utilities', () => {
   const payload = { userId: 'abc-123', email: 'alice@test.com' };
@@ -18,5 +21,37 @@ describe('JWT utilities', () => {
 
   it('verifyToken throws on tampered token', () => {
     expect(() => verifyToken('not.a.valid.token')).toThrow();
+  });
+});
+
+function makeApp() {
+  const app = express();
+  app.get('/protected', requireAuth, (req: Request, res: Response) => {
+    res.json({ userId: req.user!.userId });
+  });
+  return app;
+}
+
+describe('requireAuth middleware', () => {
+  const token = signToken({ userId: 'u1', email: 'a@test.com' });
+
+  it('allows request with valid Bearer token', async () => {
+    const res = await request(makeApp())
+      .get('/protected')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.userId).toBe('u1');
+  });
+
+  it('rejects request with no Authorization header', async () => {
+    const res = await request(makeApp()).get('/protected');
+    expect(res.status).toBe(401);
+  });
+
+  it('rejects request with invalid token', async () => {
+    const res = await request(makeApp())
+      .get('/protected')
+      .set('Authorization', 'Bearer invalid.token.here');
+    expect(res.status).toBe(401);
   });
 });
