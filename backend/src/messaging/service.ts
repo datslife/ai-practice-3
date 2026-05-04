@@ -17,7 +17,7 @@ interface Message {
   conversation_id: string;
   sender_id: string;
   content: string;
-  read_at: null;
+  read_at: Date | null;
   created_at: Date;
 }
 
@@ -70,10 +70,10 @@ export async function createMessage(
   conversationId: string,
   senderId: string,
   content: string
-): Promise<Message> {
+): Promise<{ id: string; conversation_id: string; sender_id: string; content: string; read_at: null; created_at: Date }> {
   const id = uuid();
 
-  const result = await pool.query<Message>(
+  const result = await pool.query<{ id: string; conversation_id: string; sender_id: string; content: string; read_at: null; created_at: Date }>(
     `INSERT INTO messages (id, conversation_id, sender_id, content)
      VALUES ($1, $2, $3, $4)
      RETURNING id, conversation_id, sender_id, content, read_at, created_at`,
@@ -85,7 +85,7 @@ export async function createMessage(
 
 /**
  * Mark a message as read. Only marks if the message exists and read_at is currently NULL.
- * Returns the updated message, or null if not found.
+ * Returns the updated message, or null if not found OR if already read.
  */
 export async function markMessageRead(
   messageId: string
@@ -111,13 +111,15 @@ export async function listMessages(
   limit = 50,
   offset = 0
 ): Promise<MessageListItem[]> {
+  const safeLimit = Math.max(1, Math.min(limit, 100));
+  const safeOffset = Math.max(0, offset);
   const result = await pool.query<MessageListItem>(
     `SELECT id, sender_id, content, read_at, created_at
      FROM messages
      WHERE conversation_id = $1
      ORDER BY created_at ASC
      LIMIT $2 OFFSET $3`,
-    [conversationId, limit, offset]
+    [conversationId, safeLimit, safeOffset]
   );
 
   return result.rows;
