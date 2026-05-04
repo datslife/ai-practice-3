@@ -102,6 +102,18 @@ export async function markMessageRead(
 }
 
 /**
+ * Look up the sender of a given message.
+ * Returns null if the message does not exist.
+ */
+export async function getMessageSenderId(messageId: string): Promise<string | null> {
+  const { rows } = await pool.query<{ sender_id: string }>(
+    'SELECT sender_id FROM messages WHERE id = $1',
+    [messageId]
+  );
+  return rows[0]?.sender_id ?? null;
+}
+
+/**
  * Paginated message history for a conversation.
  * Returns messages in ascending order (oldest first).
  * limit defaults to 50, offset defaults to 0.
