@@ -7,10 +7,6 @@ beforeEach(async () => {
   await redis.flushdb();
 });
 
-afterAll(async () => {
-  await redis.quit();
-});
-
 describe('setOnline', () => {
   it('sets the presence key in Redis', async () => {
     const userId = 'user-1';

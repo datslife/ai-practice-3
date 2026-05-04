@@ -1,5 +1,6 @@
 import { pool } from '../src/db/client';
+import { redis } from '../src/redis/client';
 
 export default async function globalTeardown(): Promise<void> {
-  await pool.end().catch(() => null);
+  await Promise.allSettled([pool.end(), redis.quit()]);
 }

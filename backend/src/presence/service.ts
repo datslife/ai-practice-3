@@ -12,16 +12,9 @@ export async function setOffline(userId: string): Promise<void> {
 }
 
 export async function getOnlineUserIds(userIds: string[]): Promise<string[]> {
-  if (userIds.length === 0) {
-    return [];
-  }
-
-  const results = await Promise.all(
-    userIds.map(async (userId) => {
-      const exists = await redis.exists(KEY(userId));
-      return exists === 1 ? userId : null;
-    })
-  );
-
-  return results.filter((id): id is string => id !== null);
+  if (userIds.length === 0) return [];
+  const pipeline = redis.pipeline();
+  userIds.forEach((id) => pipeline.exists(KEY(id)));
+  const results = await pipeline.exec();
+  return userIds.filter((_, i) => results?.[i]?.[1] === 1);
 }
