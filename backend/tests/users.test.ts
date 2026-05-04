@@ -55,6 +55,7 @@ describe('GET /users', () => {
     expect(res.body.users[0].email).toBe('bob@test.com');
     expect(typeof res.body.users[0].id).toBe('string');
     expect(res.body.users[0].online).toBe(false);
+    expect(res.body.users[0]).not.toHaveProperty('password_hash');
   });
 
   it('returns online: true for a user whose setOnline was called before the request', async () => {
