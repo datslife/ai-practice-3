@@ -14,6 +14,7 @@ import request from 'supertest';
 
 let serverUrl: string;
 let httpServer: ReturnType<typeof createServer>;
+let ioServer: ReturnType<typeof createSocketGateway>;
 const clientSockets: ClientSocket[] = [];
 
 function makeToken(userId: string, email: string): string {
@@ -70,7 +71,7 @@ async function registerUser(
 beforeAll((done) => {
   const app = createApp();
   httpServer = createServer(app);
-  createSocketGateway(httpServer);
+  ioServer = createSocketGateway(httpServer);
   httpServer.listen(0, () => {
     const { port } = httpServer.address() as AddressInfo;
     serverUrl = `http://localhost:${port}`;
@@ -78,13 +79,13 @@ beforeAll((done) => {
   });
 });
 
-afterAll((done) => {
-  // Disconnect all lingering clients first
+afterAll(async () => {
   for (const s of clientSockets) {
     if (s.connected) s.disconnect();
   }
-  httpServer.close(done);
-});
+  await new Promise<void>((resolve) => ioServer.close(() => resolve())).catch(() => {});
+  await new Promise<void>((resolve) => httpServer.close(() => resolve())).catch(() => {});
+}, 10_000);
 
 beforeEach(async () => {
   await resetDb();
@@ -133,7 +134,9 @@ describe('Presence events', () => {
 
     const presencePromise = new Promise<{ userId: string; status: string }>(
       (resolve) => {
-        observer.once('presence:update', resolve);
+        observer.on('presence:update', (data) => {
+          if (data.userId === 'newcomer-1') resolve(data);
+        });
       }
     );
 
