@@ -2,7 +2,7 @@ jest.mock('../../src/hooks/useAuth', () => ({
   useAuth: jest.fn(),
 }));
 
-jest.mock('@react-navigation/stack', () => ({
+jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(() => ({ navigate: jest.fn(), replace: jest.fn() })),
 }));
 
@@ -18,7 +18,7 @@ describe('LoginScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useAuth as jest.Mock).mockReturnValue({ login: mockLogin });
-    require('@react-navigation/stack').useNavigation.mockReturnValue({ navigate: mockNavigate, replace: mockNavigate });
+    require('@react-navigation/native').useNavigation.mockReturnValue({ navigate: mockNavigate, replace: mockNavigate });
   });
 
   it('renders email, password inputs and Sign In button', () => {

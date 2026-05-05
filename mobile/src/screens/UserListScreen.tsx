@@ -3,7 +3,7 @@ import {
   View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { MainStackParamList } from '../navigation/MainStack';
 import { useUsers } from '../hooks/useUsers';

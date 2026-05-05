@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../navigation/AuthStack';
 import { useAuth } from '../hooks/useAuth';

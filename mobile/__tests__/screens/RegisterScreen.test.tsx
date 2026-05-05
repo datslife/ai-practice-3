@@ -1,5 +1,5 @@
 jest.mock('../../src/hooks/useAuth', () => ({ useAuth: jest.fn() }));
-jest.mock('@react-navigation/stack', () => ({
+jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(() => ({ navigate: jest.fn() })),
 }));
 
