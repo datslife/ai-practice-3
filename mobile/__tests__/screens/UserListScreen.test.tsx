@@ -4,7 +4,7 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import UserListScreen from '../../src/screens/UserListScreen';
 import { useUsers } from '../../src/hooks/useUsers';
 
