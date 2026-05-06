@@ -13,8 +13,8 @@ export function useUsers() {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await apiClient.get<User[]>('/users');
-      setUsers(data);
+      const { data } = await apiClient.get<{ users: Array<Omit<User, 'status'> & { online: boolean }> }>('/users');
+      setUsers(data.users.map((u) => ({ ...u, status: u.online ? 'online' as const : 'offline' as const })));
     } catch {
       setError('Failed to load users');
     } finally {
