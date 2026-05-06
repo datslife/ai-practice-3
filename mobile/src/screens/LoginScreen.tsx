@@ -34,6 +34,7 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Chat</Text>
       <TextInput
+        testID="login-email-input"
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#666"
@@ -43,6 +44,7 @@ export default function LoginScreen() {
         onChangeText={setEmail}
       />
       <TextInput
+        testID="login-password-input"
         style={styles.input}
         placeholder="Password"
         placeholderTextColor="#666"
@@ -50,8 +52,8 @@ export default function LoginScreen() {
         value={password}
         onChangeText={setPassword}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+      {error ? <Text testID="login-error-text" style={styles.error}>{error}</Text> : null}
+      <TouchableOpacity testID="login-submit-button" style={styles.button} onPress={handleLogin} disabled={loading}>
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Sign In</Text>}
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>

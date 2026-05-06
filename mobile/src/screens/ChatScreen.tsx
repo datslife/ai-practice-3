@@ -59,6 +59,7 @@ export default function ChatScreen() {
       />
       <View style={styles.inputRow}>
         <TextInput
+          testID="chat-message-input"
           style={styles.input}
           placeholder="Message..."
           placeholderTextColor="#666"
@@ -67,7 +68,7 @@ export default function ChatScreen() {
           onSubmitEditing={handleSend}
           returnKeyType="send"
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+        <TouchableOpacity testID="chat-send-button" style={styles.sendButton} onPress={handleSend}>
           <Text style={styles.sendText}>Send</Text>
         </TouchableOpacity>
       </View>
@@ -76,18 +77,18 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#111' },
+  container: { flex: 1, backgroundColor: '#0f172a' },
   banner: { backgroundColor: '#854d0e', padding: 8, alignItems: 'center' },
   bannerText: { color: '#fff', fontSize: 13 },
   list: { padding: 12 },
   bubble: { maxWidth: '75%', borderRadius: 12, padding: 10, marginBottom: 8 },
   bubbleMine: { backgroundColor: '#2563eb', alignSelf: 'flex-end' },
-  bubbleTheirs: { backgroundColor: '#222', alignSelf: 'flex-start' },
-  bubbleText: { color: '#fff', fontSize: 15 },
+  bubbleTheirs: { backgroundColor: '#334155', alignSelf: 'flex-start' },
+  bubbleText: { color: '#f1f5f9', fontSize: 15 },
   readReceipt: { color: '#93c5fd', fontSize: 11, marginTop: 4, textAlign: 'right' },
   retry: { color: '#f87171', fontSize: 12, marginTop: 4 },
-  inputRow: { flexDirection: 'row', padding: 8, borderTopWidth: 1, borderTopColor: '#222' },
-  input: { flex: 1, backgroundColor: '#222', color: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15 },
+  inputRow: { flexDirection: 'row', padding: 8, borderTopWidth: 1, borderTopColor: '#1e293b' },
+  input: { flex: 1, backgroundColor: '#1e293b', color: '#f1f5f9', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15 },
   sendButton: { justifyContent: 'center', paddingHorizontal: 12 },
-  sendText: { color: '#2563eb', fontSize: 15, fontWeight: '600' },
+  sendText: { color: '#3b82f6', fontSize: 15, fontWeight: '600' },
 });

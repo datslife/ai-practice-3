@@ -42,6 +42,7 @@ export default function UserListScreen() {
   return (
     <View style={styles.container}>
       <TextInput
+        testID="userlist-search-input"
         style={styles.search}
         placeholder="Search users..."
         placeholderTextColor="#666"
@@ -53,6 +54,7 @@ export default function UserListScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }: { item: User }) => (
           <TouchableOpacity
+            testID={`userlist-row-${item.email}`}
             style={styles.row}
             onPress={() => navigation.navigate('Chat', { recipient: item, conversationId: null })}
           >
