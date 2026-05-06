@@ -5,6 +5,14 @@ const ALICE_PASS = 'Alice123!';
 const BOB_ROW = 'userlist-row-bob@e2e.test';
 
 async function loginAlice() {
+  try {
+    await waitFor(element(by.id('userlist-search-input'))).toBeVisible().withTimeout(6_000);
+    await element(by.id('nav-profile-button')).tap();
+    await waitFor(element(by.id('profile-signout-button'))).toBeVisible().withTimeout(5_000);
+    await element(by.id('profile-signout-button')).tap();
+  } catch {
+    // already on login screen
+  }
   await waitFor(element(by.id('login-email-input'))).toBeVisible().withTimeout(10_000);
   await element(by.id('login-email-input')).typeText(ALICE_EMAIL);
   await element(by.id('login-password-input')).typeText(ALICE_PASS);
@@ -13,6 +21,10 @@ async function loginAlice() {
 }
 
 describe('Chat flows', () => {
+  beforeAll(async () => {
+    await device.launchApp({ delete: true });
+  });
+
   beforeEach(async () => {
     await device.reloadReactNative();
   });
@@ -30,7 +42,7 @@ describe('Chat flows', () => {
 
     await waitFor(element(by.id('chat-message-input'))).toBeVisible().withTimeout(10_000);
     await element(by.id('chat-message-input')).typeText('Hello E2E');
-    await element(by.id('chat-send-button')).tap();
+    await element(by.id('chat-message-input')).tapReturnKey();
 
     await waitFor(element(by.text('Hello E2E'))).toBeVisible().withTimeout(5_000);
   });
@@ -42,7 +54,7 @@ describe('Chat flows', () => {
 
     await waitFor(element(by.id('chat-message-input'))).toBeVisible().withTimeout(10_000);
     await element(by.id('chat-message-input')).typeText('Confirm delivery');
-    await element(by.id('chat-send-button')).tap();
+    await element(by.id('chat-message-input')).tapReturnKey();
 
     await waitFor(element(by.text('Confirm delivery'))).toBeVisible().withTimeout(5_000);
     // Retry only renders when status === 'failed'; 8 s gives socket time to ack

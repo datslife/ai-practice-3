@@ -20,10 +20,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getToken().then((token) => {
-      // Token exists but we don't have user info — enough to know authenticated
-      if (token) setUser({ id: '', email: '', name: '' });
-    }).finally(() => setIsLoading(false));
+    (async () => {
+      try {
+        const token = await getToken();
+        if (!token) return;
+        const { data } = await apiClient.get<{ user: AuthUser }>('/auth/me');
+        connect(token);
+        setUser(data.user);
+      } catch {
+        await clearToken();
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }, []);
 
   const login = useCallback(async (email: string, password: string): Promise<void> => {
