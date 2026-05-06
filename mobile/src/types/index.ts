@@ -44,14 +44,14 @@ export interface MessageNew {
   id: string;
   senderId: string;
   content: string;
-  conversationId: string;
+  conversationId?: string;
   createdAt: string;
 }
 
 export interface MessageSent {
   tempId: string;
   id: string;
-  conversationId: string;
+  conversationId?: string;
   createdAt: string;
 }
 
