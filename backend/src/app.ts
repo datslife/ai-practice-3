@@ -3,11 +3,22 @@ import cors from 'cors';
 import { authRouter } from './auth/router';
 import { usersRouter } from './users/router';
 import { conversationsRouter } from './conversations/router';
+import { pool } from './db/client';
 
 export function createApp(): express.Application {
   const app = express();
   app.use(cors({ origin: process.env.CORS_ORIGIN ?? '*' }));
   app.use(express.json());
+
+  app.get('/health', async (_req, res) => {
+    try {
+      await pool.query('SELECT 1');
+      res.json({ status: 'ok' });
+    } catch {
+      res.status(503).json({ status: 'unavailable' });
+    }
+  });
+
   app.use('/auth', authRouter);
   app.use('/users', usersRouter);
   app.use('/conversations', conversationsRouter);
