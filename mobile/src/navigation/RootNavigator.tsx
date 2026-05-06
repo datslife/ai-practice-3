@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { ActivityIndicator, View } from 'react-native';
 import { AuthStack } from './AuthStack';
 import { MainStack } from './MainStack';
-import { getToken } from '../storage/authStorage';
+import { useAuth } from '../context/AuthContext';
 
 export function RootNavigator() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    getToken().then((token) => setIsAuthenticated(!!token));
-  }, []);
-
-  if (isAuthenticated === null) return null;
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#111', justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator color="#2563eb" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>

@@ -1,4 +1,4 @@
-jest.mock('../../src/hooks/useAuth', () => ({ useAuth: jest.fn() }));
+jest.mock('../../src/context/AuthContext', () => ({ useAuth: jest.fn() }));
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(() => ({ navigate: jest.fn() })),
 }));
@@ -6,7 +6,7 @@ jest.mock('@react-navigation/native', () => ({
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import RegisterScreen from '../../src/screens/RegisterScreen';
-import { useAuth } from '../../src/hooks/useAuth';
+import { useAuth } from '../../src/context/AuthContext';
 
 describe('RegisterScreen', () => {
   const mockRegister = jest.fn();

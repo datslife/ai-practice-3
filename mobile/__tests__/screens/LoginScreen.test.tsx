@@ -1,4 +1,4 @@
-jest.mock('../../src/hooks/useAuth', () => ({
+jest.mock('../../src/context/AuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
@@ -9,7 +9,7 @@ jest.mock('@react-navigation/native', () => ({
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import LoginScreen from '../../src/screens/LoginScreen';
-import { useAuth } from '../../src/hooks/useAuth';
+import { useAuth } from '../../src/context/AuthContext';
 
 describe('LoginScreen', () => {
   const mockLogin = jest.fn();

@@ -1,4 +1,4 @@
-jest.mock('../../src/hooks/useAuth', () => ({ useAuth: jest.fn() }));
+jest.mock('../../src/context/AuthContext', () => ({ useAuth: jest.fn() }));
 jest.mock('@react-navigation/stack', () => ({
   useNavigation: jest.fn(() => ({ replace: jest.fn() })),
 }));
@@ -6,7 +6,7 @@ jest.mock('@react-navigation/stack', () => ({
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import ProfileScreen from '../../src/screens/ProfileScreen';
-import { useAuth } from '../../src/hooks/useAuth';
+import { useAuth } from '../../src/context/AuthContext';
 
 describe('ProfileScreen', () => {
   const mockLogout = jest.fn();

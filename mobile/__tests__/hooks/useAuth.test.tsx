@@ -15,8 +15,9 @@ jest.mock('../../src/api/client', () => ({
   },
 }));
 
+import React from 'react';
 import { renderHook, act } from '@testing-library/react-native';
-import { useAuth } from '../../src/hooks/useAuth';
+import { AuthProvider, useAuth } from '../../src/context/AuthContext';
 import { apiClient } from '../../src/api/client';
 import { saveToken, clearToken } from '../../src/storage/authStorage';
 import { connect, disconnect } from '../../src/socket/socketClient';
@@ -24,11 +25,16 @@ import { connect, disconnect } from '../../src/socket/socketClient';
 const mockUser = { id: 'u1', email: 'alice@test.com', name: 'Alice' };
 const mockToken = 'jwt-token-here';
 
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <AuthProvider>{children}</AuthProvider>
+);
+
 describe('useAuth', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('starts with no user', () => {
-    const { result } = renderHook(() => useAuth());
+  it('starts with no user', async () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await act(async () => {});
     expect(result.current.user).toBeNull();
   });
 
@@ -36,7 +42,7 @@ describe('useAuth', () => {
     (apiClient.post as jest.Mock).mockResolvedValueOnce({
       data: { user: mockUser, token: mockToken },
     });
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
     await act(async () => {
       await result.current.login('alice@test.com', 'secret');
     });
@@ -47,7 +53,7 @@ describe('useAuth', () => {
 
   it('login throws on API error', async () => {
     (apiClient.post as jest.Mock).mockRejectedValueOnce({ response: { status: 401 } });
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
     await expect(
       act(async () => result.current.login('x@test.com', 'wrong'))
     ).rejects.toBeDefined();
@@ -57,7 +63,7 @@ describe('useAuth', () => {
     (apiClient.post as jest.Mock).mockResolvedValueOnce({
       data: { user: mockUser, token: mockToken },
     });
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
     await act(async () => { await result.current.login('alice@test.com', 'secret'); });
     await act(async () => { await result.current.logout(); });
     expect(result.current.user).toBeNull();

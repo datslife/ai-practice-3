@@ -21,8 +21,9 @@ jest.mock('@react-navigation/stack', () => ({
   StackNavigationProp: jest.fn(),
 }));
 
-jest.mock('../src/hooks/useAuth', () => ({
-  useAuth: jest.fn(() => ({ login: jest.fn(), register: jest.fn(), user: null, logout: jest.fn() })),
+jest.mock('../src/context/AuthContext', () => ({
+  AuthProvider: ({ children }: { children: React.ReactNode }) => children,
+  useAuth: jest.fn(() => ({ login: jest.fn(), register: jest.fn(), user: null, isAuthenticated: false, isLoading: false, logout: jest.fn() })),
 }));
 
 import React from 'react';
