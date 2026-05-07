@@ -19,4 +19,4 @@
 
 - [x] 4.1 Run `cd mobile && npx tsc --noEmit` — zero type errors
 - [x] 4.2 Run `cd mobile && npm test` — all unit/hook tests pass
-- [ ] 4.3 Manual smoke test on simulator: open chat with existing conversation → history loads; open chat with new user → empty list, send works
+- [x] 4.3 Manual smoke test on simulator: open chat with existing conversation → history loads; open chat with new user → empty list, send works
