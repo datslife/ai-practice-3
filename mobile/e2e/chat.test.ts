@@ -47,6 +47,28 @@ describe('Chat flows', () => {
     await waitFor(element(by.text('Hello E2E'))).toBeVisible().withTimeout(5_000);
   });
 
+  it('message history persists after closing and reopening chat', async () => {
+    await loginAlice();
+    await waitFor(element(by.id(BOB_ROW))).toBeVisible().withTimeout(15_000);
+    await element(by.id(BOB_ROW)).tap();
+
+    // Send a message
+    await waitFor(element(by.id('chat-message-input'))).toBeVisible().withTimeout(10_000);
+    await element(by.id('chat-message-input')).typeText('History test message');
+    await element(by.id('chat-message-input')).tapReturnKey();
+    await waitFor(element(by.text('History test message'))).toBeVisible().withTimeout(5_000);
+
+    // Navigate back to user list
+    await element(by.label('Chats')).tap();
+    await waitFor(element(by.id(BOB_ROW))).toBeVisible().withTimeout(10_000);
+
+    // Reopen chat with Bob
+    await element(by.id(BOB_ROW)).tap();
+
+    // History should still be visible
+    await waitFor(element(by.text('History test message'))).toBeVisible().withTimeout(10_000);
+  });
+
   it('sent message does not show Retry (delivery confirmed by server)', async () => {
     await loginAlice();
     await waitFor(element(by.id(BOB_ROW))).toBeVisible().withTimeout(15_000);
