@@ -16,6 +16,53 @@ async function registerUser(
   return { token: res.body.token, userId: res.body.user.id };
 }
 
+describe('GET /conversations/with/:recipientId', () => {
+  let app: ReturnType<typeof createApp>;
+  let aliceToken: string;
+  let aliceId: string;
+  let bobId: string;
+
+  beforeEach(async () => {
+    await resetDb();
+    await redis.flushdb();
+    app = createApp();
+
+    const alice = await registerUser(app, 'Alice', 'alice@test.com');
+    aliceToken = alice.token;
+    aliceId = alice.userId;
+
+    const bob = await registerUser(app, 'Bob', 'bob@test.com');
+    bobId = bob.userId;
+  });
+
+  it('returns 401 when no token is provided', async () => {
+    const res = await request(app).get(`/conversations/with/${bobId}`);
+    expect(res.status).toBe(401);
+  });
+
+  it('returns 404 when no conversation exists between the two users', async () => {
+    const res = await request(app)
+      .get(`/conversations/with/${bobId}`)
+      .set('Authorization', `Bearer ${aliceToken}`);
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Not found');
+  });
+
+  it('returns 200 with conversation data when conversation exists', async () => {
+    const conv = await getOrCreateConversation(aliceId, bobId);
+
+    const res = await request(app)
+      .get(`/conversations/with/${bobId}`)
+      .set('Authorization', `Bearer ${aliceToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe(conv.id);
+    expect([res.body.user_a_id, res.body.user_b_id]).toContain(aliceId);
+    expect([res.body.user_a_id, res.body.user_b_id]).toContain(bobId);
+    expect(typeof res.body.created_at).toBe('string');
+  });
+});
+
 describe('GET /conversations/:id/messages', () => {
   let app: ReturnType<typeof createApp>;
   let aliceToken: string;

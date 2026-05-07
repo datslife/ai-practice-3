@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { registerUser, loginUser, AuthError } from './service';
+import { requireAuth } from './middleware';
+import { pool } from '../db/client';
 
 export const authRouter = Router();
 
@@ -26,6 +28,19 @@ authRouter.post('/register', authLimiter, async (req, res, next) => {
       res.status(err.statusCode).json({ error: err.message });
       return;
     }
+    next(err);
+  }
+});
+
+authRouter.get('/me', requireAuth, async (req, res, next) => {
+  try {
+    const { rows } = await pool.query<{ id: string; email: string; name: string }>(
+      'SELECT id, email, name FROM users WHERE id = $1',
+      [req.user!.userId]
+    );
+    if (!rows[0]) { res.status(401).json({ error: 'User not found' }); return; }
+    res.json({ user: rows[0] });
+  } catch (err) {
     next(err);
   }
 });

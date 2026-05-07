@@ -5,6 +5,32 @@ import { listMessages } from '../messaging/service';
 
 export const conversationsRouter = Router();
 
+conversationsRouter.get('/with/:recipientId', requireAuth, async (req, res, next) => {
+  try {
+    if (!req.user) { next(new Error('requireAuth missing')); return; }
+
+    const userId = req.user.userId;
+    const { recipientId } = req.params;
+
+    const { rows } = await pool.query<{ id: string; user_a_id: string; user_b_id: string; created_at: string }>(
+      `SELECT id, user_a_id, user_b_id, created_at
+       FROM conversations
+       WHERE (user_a_id = $1 AND user_b_id = $2)
+          OR (user_a_id = $2 AND user_b_id = $1)`,
+      [userId, recipientId]
+    );
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: 'Not found' });
+      return;
+    }
+
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+});
+
 conversationsRouter.get('/:id/messages', requireAuth, async (req, res, next) => {
   try {
     if (!req.user) { next(new Error('requireAuth missing')); return; }
