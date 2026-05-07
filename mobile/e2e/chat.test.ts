@@ -59,7 +59,7 @@ describe('Chat flows', () => {
     await waitFor(element(by.text('History test message'))).toBeVisible().withTimeout(5_000);
 
     // Navigate back to user list
-    await element(by.label('Chats')).tap();
+    await element(by.label('Chats, back')).tap();
     await waitFor(element(by.id(BOB_ROW))).toBeVisible().withTimeout(10_000);
 
     // Reopen chat with Bob
