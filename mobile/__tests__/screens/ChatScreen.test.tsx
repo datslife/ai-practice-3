@@ -1,4 +1,7 @@
 jest.mock('../../src/hooks/useChat', () => ({ useChat: jest.fn() }));
+jest.mock('../../src/context/AuthContext', () => ({
+  useAuth: jest.fn(() => ({ user: { id: 'current-user-id', name: 'Alice', email: 'a@test.com' } })),
+}));
 jest.mock('@react-navigation/stack', () => ({
   useNavigation: jest.fn(() => ({ navigate: jest.fn() })),
 }));
@@ -15,7 +18,7 @@ import { useRoute } from '@react-navigation/native';
 
 const mockRecipient = { id: 'u2', name: 'Bob', email: 'b@test.com', status: 'online' as const, created_at: '' };
 const mockMessages = [
-  { id: 'm1', conversation_id: 'c1', sender_id: 'me', content: 'Hi Bob', read_at: null, created_at: '', status: 'sent' as const },
+  { id: 'm1', conversation_id: 'c1', sender_id: 'current-user-id', content: 'Hi Bob', read_at: null, created_at: '', status: 'sent' as const },
   { id: 'm2', conversation_id: 'c1', sender_id: 'u2', content: 'Hey!', read_at: null, created_at: '', status: 'sent' as const },
 ];
 
@@ -61,9 +64,17 @@ describe('ChatScreen', () => {
     expect(mockSend).toHaveBeenCalledWith('u2', 'New message');
   });
 
+  it('renders own messages right-aligned and recipient messages left-aligned', () => {
+    const { getByTestId } = render(<ChatScreen />);
+    // m1 sender_id = 'current-user-id' (mine) → bubbleMine → alignSelf: 'flex-end'
+    expect(getByTestId('bubble-m1')).toHaveStyle({ alignSelf: 'flex-end' });
+    // m2 sender_id = 'u2' (recipient) → bubbleTheirs → alignSelf: 'flex-start'
+    expect(getByTestId('bubble-m2')).toHaveStyle({ alignSelf: 'flex-start' });
+  });
+
   it('shows failed message with Retry', () => {
     (useChat as jest.Mock).mockReturnValue({
-      messages: [{ id: 't1', conversation_id: 'c1', sender_id: 'me', content: 'Fail', read_at: null, created_at: '', status: 'failed', tempId: 't1' }],
+      messages: [{ id: 't1', conversation_id: 'c1', sender_id: 'current-user-id', content: 'Fail', read_at: null, created_at: '', status: 'failed', tempId: 't1' }],
       loading: false,
       disconnected: false,
       sendMessage: mockSend,

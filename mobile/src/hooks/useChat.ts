@@ -7,19 +7,31 @@ function generateTempId(): string {
   return `temp-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export function useChat(conversationId: string | null, currentUserId: string) {
+export function useChat(recipientId: string, currentUserId: string) {
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [disconnected, setDisconnected] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+    apiClient
+      .get<{ id: string }>(`/conversations/with/${recipientId}`)
+      .then(({ data }) => { if (!cancelled) setConversationId(data.id); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [recipientId]);
+
+  useEffect(() => {
     if (!conversationId) return;
+    let cancelled = false;
     setLoading(true);
     apiClient
-      .get<Message[]>(`/conversations/${conversationId}/messages`)
-      .then(({ data }) => setMessages(data))
+      .get<{ messages: Message[] }>(`/conversations/${conversationId}/messages`)
+      .then(({ data }) => { if (!cancelled) setMessages(data.messages); })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [conversationId]);
 
   useEffect(() => {

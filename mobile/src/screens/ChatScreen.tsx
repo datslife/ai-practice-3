@@ -5,16 +5,17 @@ import {
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { MainStackParamList } from '../navigation/MainStack';
 import { useChat } from '../hooks/useChat';
+import { useAuth } from '../context/AuthContext';
 import { Message } from '../types';
-
-const CURRENT_USER_ID = 'me';
 
 type ChatRoute = RouteProp<MainStackParamList, 'Chat'>;
 
 export default function ChatScreen() {
   const { params } = useRoute<ChatRoute>();
-  const { recipient, conversationId } = params;
-  const { messages, disconnected, sendMessage, retryMessage } = useChat(conversationId, CURRENT_USER_ID);
+  const { recipient } = params;
+  const { user } = useAuth();
+  const currentUserId = user?.id ?? '';
+  const { messages, disconnected, sendMessage, retryMessage } = useChat(recipient.id, currentUserId);
   const [text, setText] = useState('');
   const listRef = useRef<FlatList>(null);
 
@@ -25,9 +26,9 @@ export default function ChatScreen() {
   }
 
   function renderMessage({ item }: { item: Message }) {
-    const isMine = item.sender_id === CURRENT_USER_ID;
+    const isMine = item.sender_id === currentUserId;
     return (
-      <View style={[styles.bubble, isMine ? styles.bubbleMine : styles.bubbleTheirs]}>
+      <View testID={`bubble-${item.id}`} style={[styles.bubble, isMine ? styles.bubbleMine : styles.bubbleTheirs]}>
         <Text style={styles.bubbleText}>{item.content}</Text>
         {item.status === 'failed' && (
           <TouchableOpacity onPress={() => retryMessage(item.tempId!, recipient.id)}>
