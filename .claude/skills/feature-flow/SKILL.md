@@ -2,7 +2,7 @@
 name: feature-flow
 description: Run the standard feature workflow using Superpowers + OpenSpec from a single feature request.
 disable-model-invocation: true
-argument-hint: [feature description] [--auto-implement] [--archive]
+argument-hint: "[feature description] [--auto-implement] [--archive]"
 ---
 
 You are running the project standard feature workflow.
@@ -110,16 +110,36 @@ If the user passed `--auto-implement`, continue.
 
 ## Step 5 — Implementation
 
-Use Superpowers subagent-driven development style.
+Before starting, assess complexity to choose execution mode:
+
+**Use subagent dispatch** (`superpowers:subagent-driven-development`) when ANY of:
+- Tasks are largely independent and can be parallelized
+- Many tasks with high risk of context pollution
+- Architectural change requiring isolated review
+- High complexity: many moving parts, unclear interactions
+
+**Use main session (inline)** when ALL of:
+- Tasks are sequential and tightly coupled
+- Spec is clear and unambiguous
+- Low complexity: small number of focused changes
+
+**Required gates regardless of mode:**
+
+For each task:
+1. Write failing test first — commit it, show FAIL output, THEN implement
+2. Implement minimal code to make test pass — commit separately
+3. Verify spec compliance explicitly before marking task done
+
+After all tasks:
+- Verify code quality (lint, typecheck, full test suite)
+- If change touches auth, data integrity, or critical UX path: run explicit spec compliance check against every acceptance criterion
 
 Implementation rules:
 
 - Read relevant files before editing
 - Implement task by task from OpenSpec `tasks.md`
 - Keep changes minimal and scoped
-- Add/update tests
-- Update task checkboxes
-- Do not mark a task done until verified
+- Update task checkboxes only after gates above are passed
 - Avoid unrelated refactors
 
 ## Step 6 — Verification
